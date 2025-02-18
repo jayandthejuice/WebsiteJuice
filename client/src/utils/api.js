@@ -2,7 +2,8 @@ import axios from 'axios';
 
 // Create an Axios instance
 const API = axios.create({
-  baseURL: 'http://localhost:5001/api', // Base API URL
+  //baseURL: 'http://localhost:5001/api', // Base API URL
+  baseURL: 'https://websitejuice.onrender.com'
 });
 
 // Automatically add the Authorization header if the token exists
