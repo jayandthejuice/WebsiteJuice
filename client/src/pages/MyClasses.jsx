@@ -207,12 +207,15 @@ const MyClasses = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [countdownTimers, setCountdownTimers] = useState({});
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://websitejuice.onrender.com/api';
+
 
   useEffect(() => {
     const fetchClasses = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:5001/api/classes/my-classes", {
+        //const response = await axios.get("http://localhost:5001/api/classes/my-classes", {
+          const response = await axios.get(`${API_BASE_URL}/classes/my-classes`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -278,7 +281,8 @@ const MyClasses = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        "http://localhost:5001/api/classes/watch-lesson",
+        //"http://localhost:5001/api/classes/watch-lesson",
+        `${API_BASE_URL}/classes/watch-lesson`,
         { classId, lessonId },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -359,7 +363,8 @@ const MyClasses = () => {
                             onPlay={() => handleWatchLesson(cls._id, lesson._id)}
                           >
                             <source
-                              src={`http://localhost:5001/${lesson.content}`}
+                              //src={`http://localhost:5001/${lesson.content}`}
+                              src={`${API_BASE_URL}/${lesson.content}`}
                               type="video/mp4"
                             />
                             Your browser does not support the video tag.
