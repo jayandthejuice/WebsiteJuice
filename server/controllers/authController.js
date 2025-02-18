@@ -46,20 +46,24 @@ const register = async (req, res) => {
   // Login as a user
 // Login function in authController.js
 const login = async (req, res) => {
+  console.log("🛠 Received login request:", req.body);
   const { email, password } = req.body;
 
   if (!email || !password) {
+    console.log("❌ Missing email or password");
     return res.status(400).json({ message: 'All fields are required.' });
   }
 
   try {
     const user = await User.findOne({ email });
     if (!user) {
+      console.log("❌ User not found:", email);
       return res.status(400).json({ message: 'Invalid email or password.' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
+      console.log("❌ Incorrect password for:", email);
       return res.status(400).json({ message: 'Invalid email or password.' });
     }
 
@@ -69,6 +73,8 @@ const login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '10d' }
     );
+    console.log("✅ Login successful for:", email);
+    console.log("Generated Token:", token);
 
     console.log("Generated Token Payload:", { id: user._id, role: user.role }); // Debug log
 
@@ -84,6 +90,7 @@ const login = async (req, res) => {
       },
     });
   } catch (err) {
+    console.error("❌ Login error:", err);
     console.error(err);
     res.status(500).json({ message: 'Server error' });
   }
