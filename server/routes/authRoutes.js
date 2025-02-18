@@ -8,6 +8,7 @@ const adminProtect = require('../middleware/adminProtect'); // Import adminProte
 // Routes
 router.post('/register', register); // Register route
 router.post('/login', login); // Login route
+console.log("✅ Inside authRoutes.js");
 
 // Example of a protected route
 router.get('/protected', protect, (req, res) => {

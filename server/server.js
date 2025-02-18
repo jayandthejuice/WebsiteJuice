@@ -21,6 +21,7 @@ app.use('/api/classes', classesRoutes); // My Classes route
 
 // Connect to MongoDB
 connectDB();
+console.log("✅ Auth routes loaded");
 
 // Start the server
 //const PORT = process.env.PORT || 5001; // Use PORT from .env or default to 5000
