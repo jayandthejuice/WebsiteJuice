@@ -23,7 +23,8 @@ app.use('/api/classes', classesRoutes); // My Classes route
 connectDB();
 
 // Start the server
-const PORT = process.env.PORT || 5001; // Use PORT from .env or default to 5000
+//const PORT = process.env.PORT || 5001; // Use PORT from .env or default to 5000
+const PORT = process.env.PORT || 10000; // Use PORT from .env or default to 5000
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
