@@ -23,6 +23,10 @@ app.use('/api/classes', classesRoutes); // My Classes route
 connectDB();
 console.log("✅ Auth routes loaded");
 
+app.get('/api/test', (req, res) => {
+  res.json({ message: "Backend is working!" });
+});
+
 // Start the server
 //const PORT = process.env.PORT || 5001; // Use PORT from .env or default to 5000
 const PORT = process.env.PORT || 10000; // Use PORT from .env or default to 5000
