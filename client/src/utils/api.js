@@ -53,7 +53,7 @@ export const deleteLesson = async (lessonId) => {
   try {
     const token = localStorage.getItem('token');
     //const response = await axios.delete(`${BASE_URL}/api/classes/delete-lesson/${lessonId}`, {
-      const response = await axios.delete(`classes/delete-lesson/${lessonId}`, {
+      const response = await axios.delete(`/classes/delete-lesson/${lessonId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -65,7 +65,7 @@ export const deleteLesson = async (lessonId) => {
 export const addClass = async (classData) => {
   const token = localStorage.getItem("token"); // Get auth token
   //const response = await fetch("${BASE_URL}/api/classes/add-class", {
-    const response = await fetch("classes/add-class", {
+    const response = await API.post("/classes/add-class", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
