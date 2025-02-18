@@ -456,6 +456,8 @@ const ManageClasses = () => {
   const [updatedLessonTitle, setUpdatedLessonTitle] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://websitejuice.onrender.com/api';
+
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -645,7 +647,8 @@ const ManageClasses = () => {
             <div key={lesson._id} className="mt-4 p-2 bg-gray-700 rounded">
               <p>{lesson.title}</p>
               <video controls width="100%">
-                <source src={`http://localhost:5001/${lesson.content}`} type="video/mp4" />
+                {/* <source src={`http://localhost:5001/${lesson.content}`} type="video/mp4" /> */}
+                <source src={`${API_BASE_URL}/${lesson.content}`} type="video/mp4" />
               </video>
               <button onClick={() => handleDeleteLesson(lesson._id, cls._id)} className="px-2 py-1 bg-red-500 text-white font-bold rounded mt-2">Delete Lesson</button>
             </div>
