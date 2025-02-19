@@ -16,19 +16,40 @@ app.use(express.json()); // Parse incoming JSON requests
 app.use(express.json({ limit: "3000mb" })); 
 app.use(express.urlencoded({ limit: "3000mb", extended: true }));
 
-app.use(cors()); // Enable CORS for cross-origin requests
+//app.use(cors()); // Enable CORS for cross-origin requests
+// ✅ Enable CORS
+app.use(cors({
+  origin: "*", // Allow all origins (or set a specific frontend URL)
+  methods: ["GET", "POST", "PUT", "DELETE"],
+}));
 const fs = require("fs");
 
-const uploadDir = path.join(__dirname, "uploads");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-  console.log("✅ 'uploads/' directory created.");
+// ✅ Check if "uploads" directory exists (to prevent errors)
+const uploadsDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
 }
+// ✅ Serve static files properly
+app.use("/uploads", express.static("uploads"));
 
-app.use("/uploads", express.static(uploadDir)); // Serve uploaded files
+// ✅ Custom Route to Handle MOV & MP4 Files Correctly
+app.get("/uploads/:filename", (req, res) => {
+  const filePath = path.join(uploadsDir, req.params.filename);
 
-//app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ message: "File not found" });
+  }
 
+  // ✅ Set correct content type for streaming
+  if (filePath.endsWith(".mov")) {
+    res.setHeader("Content-Type", "video/quicktime");
+  } else if (filePath.endsWith(".mp4")) {
+    res.setHeader("Content-Type", "video/mp4");
+  }
+
+  res.setHeader("Content-Disposition", "inline"); // Stream instead of download
+  res.sendFile(filePath);
+});
 const cloudinary = require("cloudinary").v2;
 
 // ✅ Configure Cloudinary with Secure Credentials

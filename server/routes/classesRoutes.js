@@ -20,14 +20,25 @@ const {
 const Classes = require('../models/Classes'); // Importing the Classes model
 
 // ✅ Configure Multer for Local File Uploads
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "uploads/"); // ✅ Save files in the 'uploads/' directory
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, `${Date.now()}-${file.originalname}`); // ✅ Unique filenames
+//   },
+// });
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/"); // ✅ Save files in the 'uploads/' directory
+    cb(null, "uploads/"); // ✅ Save files in 'uploads/'
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`); // ✅ Unique filenames
+    // ✅ Remove spaces and special characters
+    const safeFilename = file.originalname.replace(/\s+/g, "_").replace(/[^\w.-]/g, "");
+    cb(null, `${Date.now()}-${safeFilename}`);
   },
 });
+
 
 // ✅ Set Maximum File Size to 2GB
 const upload = multer({
