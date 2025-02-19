@@ -45,7 +45,7 @@ app.get("/uploads/:filename", (req, res) => {
   const range = req.headers.range;
 
   if (range) {
-    // ✅ Handle Range Requests for streaming
+    // ✅ Handle Partial Content Requests (Streaming)
     const parts = range.replace(/bytes=/, "").split("-");
     const start = parseInt(parts[0], 10);
     const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
@@ -62,24 +62,25 @@ app.get("/uploads/:filename", (req, res) => {
       "Accept-Ranges": "bytes",
       "Content-Length": chunksize,
       "Content-Type": filePath.endsWith(".mov") ? "video/quicktime" : "video/mp4",
-      "Content-Disposition": "inline", // ✅ Make sure it's inline
+      "Content-Disposition": "inline", // ✅ Force inline streaming
     };
 
     res.writeHead(206, head);
     file.pipe(res);
   } else {
-    // ✅ Serve the full file with streaming headers
+    // ✅ Serve Full Video with Proper Streaming Headers
     res.writeHead(200, {
       "Content-Length": fileSize,
       "Content-Type": filePath.endsWith(".mov") ? "video/quicktime" : "video/mp4",
       "Accept-Ranges": "bytes",
-      "Cache-Control": "no-store",
-      "Content-Disposition": "inline", // ✅ Force inline viewing
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      "Content-Disposition": "inline", // ✅ Force inline playback
     });
 
     fs.createReadStream(filePath).pipe(res);
   }
 });
+
 
 const cloudinary = require("cloudinary").v2;
 
