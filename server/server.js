@@ -18,7 +18,6 @@ app.use(express.urlencoded({ limit: "3000mb", extended: true }));
 
 app.use(cors()); // Enable CORS for cross-origin requests
 const fs = require("fs");
-const path = require("path");
 
 const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
