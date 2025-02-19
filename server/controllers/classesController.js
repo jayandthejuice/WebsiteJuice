@@ -90,6 +90,44 @@ const addClass = async (req, res) => {
     res.status(500).json({ message: "Server error while adding the class." });
   }
 };
+const addLesson = async (req, res) => {
+  try {
+    const { classId, lessonTitle } = req.body;
+
+    if (!req.file) {
+      return res.status(400).json({ message: "No video file uploaded" });
+    }
+
+    // ✅ Upload video to Cloudinary
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { resource_type: "video", folder: "lessons" },
+      async (error, result) => {
+        if (error) {
+          console.error("Cloudinary Upload Error:", error);
+          return res.status(500).json({ message: "Error uploading to Cloudinary" });
+        }
+
+        // ✅ Store the video URL in MongoDB
+        const updatedClass = await Classes.findByIdAndUpdate(
+          classId,
+          { $push: { lessons: { title: lessonTitle, content: result.secure_url } } },
+          { new: true }
+        );
+
+        if (!updatedClass) {
+          return res.status(404).json({ message: "Class not found" });
+        }
+
+        res.json({ message: "Lesson added successfully!", lesson: { title: lessonTitle, content: result.secure_url } });
+      }
+    );
+
+    Readable.from(req.file.buffer).pipe(uploadStream);
+  } catch (error) {
+    console.error("Error adding lesson:", error);
+    res.status(500).json({ message: "Error adding lesson" });
+  }
+};
 // Update class title (Admin only)
 const updateClassTitle = async (req, res) => {
   const { classId } = req.params;
@@ -175,44 +213,6 @@ const deleteClass = async (req, res) => {
 //   }
 // };
 
-exports.addLesson = async (req, res) => {
-  try {
-    const { classId, lessonTitle } = req.body;
-
-    if (!req.file) {
-      return res.status(400).json({ message: "No video file uploaded" });
-    }
-
-    // ✅ Upload video to Cloudinary
-    const uploadStream = cloudinary.uploader.upload_stream(
-      { resource_type: "video", folder: "lessons" },
-      async (error, result) => {
-        if (error) {
-          console.error("Cloudinary Upload Error:", error);
-          return res.status(500).json({ message: "Error uploading to Cloudinary" });
-        }
-
-        // ✅ Store the video URL in MongoDB
-        const updatedClass = await Classes.findByIdAndUpdate(
-          classId,
-          { $push: { lessons: { title: lessonTitle, content: result.secure_url } } },
-          { new: true }
-        );
-
-        if (!updatedClass) {
-          return res.status(404).json({ message: "Class not found" });
-        }
-
-        res.json({ message: "Lesson added successfully!", lesson: { title: lessonTitle, content: result.secure_url } });
-      }
-    );
-
-    Readable.from(req.file.buffer).pipe(uploadStream);
-  } catch (error) {
-    console.error("Error adding lesson:", error);
-    res.status(500).json({ message: "Error adding lesson" });
-  }
-};
 
 // Update lesson content (admin only)
 const updateLesson = async (req, res) => {
