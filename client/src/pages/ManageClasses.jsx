@@ -687,73 +687,157 @@ const ManageClasses = () => {
   };
   
 
-  return (
-    <div className="bg-black min-h-screen text-white p-8">
-      <h1 className="text-3xl font-bold mb-6">Manage Classes</h1>
+//   return (
+//     <div className="bg-black min-h-screen text-white p-8">
+//       <h1 className="text-3xl font-bold mb-6">Manage Classes</h1>
 
-      {error && <p className="text-red-500 mt-2">{error}</p>}
-      {success && <p className="text-green-500 mt-2">{success}</p>}
+//       {error && <p className="text-red-500 mt-2">{error}</p>}
+//       {success && <p className="text-green-500 mt-2">{success}</p>}
 
-      {/* Add Class Form */}
-      <form onSubmit={handleAddClass} className="mb-6">
-        <input 
-          type="text" 
-          placeholder="Class Title" 
-          value={newClassTitle} 
-          onChange={(e) => setNewClassTitle(e.target.value)} 
-          required 
-          className="p-2 rounded bg-gray-800 text-white w-2/3"
-        />
-        <button type="submit" className="px-4 py-2 bg-blue-500 text-white font-bold rounded">Add Class</button>
-      </form>
+//       {/* Add Class Form */}
+//       <form onSubmit={handleAddClass} className="mb-6">
+//         <input 
+//           type="text" 
+//           placeholder="Class Title" 
+//           value={newClassTitle} 
+//           onChange={(e) => setNewClassTitle(e.target.value)} 
+//           required 
+//           className="p-2 rounded bg-gray-800 text-white w-2/3"
+//         />
+//         <button type="submit" className="px-4 py-2 bg-blue-500 text-white font-bold rounded">Add Class</button>
+//       </form>
 
-      {/* ✅ ADD LESSON FORM (This was missing—Now it's back!) */}
-      <form onSubmit={handleAddLesson} className="mb-6">
-        <select 
-          value={newLesson.classId} 
-          onChange={(e) => setNewLesson({ ...newLesson, classId: e.target.value })} 
-          required
-          className="p-2 rounded bg-gray-800 text-white"
-        >
-          <option value="">Select a class</option>
-          {classes.map((cls) => (
-            <option key={cls._id} value={cls._id}>{cls.title}</option>
-          ))}
-        </select>
-        <input 
-          type="text" 
-          placeholder="Lesson Title" 
-          value={newLesson.lessonTitle} 
-          onChange={(e) => setNewLesson({ ...newLesson, lessonTitle: e.target.value })} 
-          required 
-          className="p-2 rounded bg-gray-800 text-white"
-        />
-        <input type="file" accept="video/*" onChange={handleFileChange} required className="p-2 bg-gray-800 text-white rounded" />
-        <button type="submit" className="px-4 py-2 bg-green-500 text-white font-bold rounded">Add Lesson</button>
-      </form>
+//       {/* ✅ ADD LESSON FORM (This was missing—Now it's back!) */}
+//       <form onSubmit={handleAddLesson} className="mb-6">
+//         <select 
+//           value={newLesson.classId} 
+//           onChange={(e) => setNewLesson({ ...newLesson, classId: e.target.value })} 
+//           required
+//           className="p-2 rounded bg-gray-800 text-white"
+//         >
+//           <option value="">Select a class</option>
+//           {classes.map((cls) => (
+//             <option key={cls._id} value={cls._id}>{cls.title}</option>
+//           ))}
+//         </select>
+//         <input 
+//           type="text" 
+//           placeholder="Lesson Title" 
+//           value={newLesson.lessonTitle} 
+//           onChange={(e) => setNewLesson({ ...newLesson, lessonTitle: e.target.value })} 
+//           required 
+//           className="p-2 rounded bg-gray-800 text-white"
+//         />
+//         <input type="file" accept="video/*" onChange={handleFileChange} required className="p-2 bg-gray-800 text-white rounded" />
+//         <button type="submit" className="px-4 py-2 bg-green-500 text-white font-bold rounded">Add Lesson</button>
+//       </form>
 
-      {/* Display Classes and Lessons */}
-      {classes.map((cls) => (
-        <div key={cls._id} className="mb-6 p-4 bg-gray-800 rounded">
-          <h3 className="text-xl font-bold">{cls.title}</h3>
-          <button onClick={() => handleDeleteClass(cls._id)} className="px-3 py-1 bg-red-500 text-white font-bold rounded">Delete Class</button>
+//       {/* Display Classes and Lessons */}
+//       {classes.map((cls) => (
+//         <div key={cls._id} className="mb-6 p-4 bg-gray-800 rounded">
+//           <h3 className="text-xl font-bold">{cls.title}</h3>
+//           <button onClick={() => handleDeleteClass(cls._id)} className="px-3 py-1 bg-red-500 text-white font-bold rounded">Delete Class</button>
 
-          {cls.lessons.map((lesson) => (
-            <div key={lesson._id} className="mt-4 p-2 bg-gray-700 rounded">
-              <p>{lesson.title}</p>
-              <video controls width="100%">
-                {/* <source src={`http://localhost:5001/${lesson.content}`} type="video/mp4" /> */}
-                {/* <source src={`${API_BASE_URL}/${lesson.content}`} type="video/mp4" /> */}
-                <source src={`${lesson.content}`} type="video/mp4" />
+//           {cls.lessons.map((lesson) => (
+//             <div key={lesson._id} className="mt-4 p-2 bg-gray-700 rounded">
+//               <p>{lesson.title}</p>
+//               <video controls width="100%">
+//                 {/* <source src={`http://localhost:5001/${lesson.content}`} type="video/mp4" /> */}
+//                 {/* <source src={`${API_BASE_URL}/${lesson.content}`} type="video/mp4" /> */}
+//                 <source src={`${lesson.content}`} type="video/mp4" />
+//                   Your browser does not support the video tag.
+//               </video>
+//               <button onClick={() => handleDeleteLesson(lesson._id, cls._id)} className="px-2 py-1 bg-red-500 text-white font-bold rounded mt-2">Delete Lesson</button>
+//             </div>
+//           ))}
+//         </div>
+//       ))}
+//     </div>
+//   );
+// };
+
+// export default ManageClasses;
+return (
+  <div className="bg-black min-h-screen text-white p-8">
+    <h1 className="text-3xl font-bold mb-6">Manage Classes</h1>
+
+    {error && <p className="text-red-500 mt-2">{error}</p>}
+    {success && <p className="text-green-500 mt-2">{success}</p>}
+
+    {/* Add Class Form */}
+    <form onSubmit={handleAddClass} className="mb-6">
+      <input 
+        type="text" 
+        placeholder="Class Title" 
+        value={newClassTitle} 
+        onChange={(e) => setNewClassTitle(e.target.value)} 
+        required 
+        className="p-2 rounded bg-gray-800 text-white w-2/3"
+      />
+      <button type="submit" className="px-4 py-2 bg-blue-500 text-white font-bold rounded">Add Class</button>
+    </form>
+
+    {/* Add Lesson Form */}
+    <form onSubmit={handleAddLesson} className="mb-6">
+      <select 
+        value={newLesson.classId} 
+        onChange={(e) => setNewLesson({ ...newLesson, classId: e.target.value })} 
+        required
+        className="p-2 rounded bg-gray-800 text-white"
+      >
+        <option value="">Select a class</option>
+        {Array.isArray(classes) && classes.length > 0 ? (
+          classes.map((cls) => (
+            <option key={cls._id || Math.random()} value={cls._id}>{cls.title || "Untitled Class"}</option>
+          ))
+        ) : (
+          <option disabled>No classes available</option>
+        )}
+      </select>
+      <input 
+        type="text" 
+        placeholder="Lesson Title" 
+        value={newLesson.lessonTitle} 
+        onChange={(e) => setNewLesson({ ...newLesson, lessonTitle: e.target.value })} 
+        required 
+        className="p-2 rounded bg-gray-800 text-white"
+      />
+      <input type="file" accept="video/*" onChange={handleFileChange} required className="p-2 bg-gray-800 text-white rounded" />
+      <button type="submit" className="px-4 py-2 bg-green-500 text-white font-bold rounded">Add Lesson</button>
+    </form>
+
+    {/* Display Classes and Lessons */}
+    {Array.isArray(classes) && classes.length > 0 ? (
+      classes.map((cls, index) => (
+        <div key={cls._id || index} className="mb-6 p-4 bg-gray-800 rounded">
+          <h3 className="text-xl font-bold">{cls.title || "Untitled Class"}</h3>
+          <button onClick={() => handleDeleteClass(cls._id)} className="px-3 py-1 bg-red-500 text-white font-bold rounded">
+            Delete Class
+          </button>
+
+          {Array.isArray(cls.lessons) && cls.lessons.length > 0 ? (
+            cls.lessons.map((lesson, lessonIndex) => (
+              <div key={lesson._id || lessonIndex} className="mt-4 p-2 bg-gray-700 rounded">
+                <p>{lesson.title || "Untitled Lesson"}</p>
+                <video controls width="100%">
+                  <source src={lesson.content || ""} type="video/mp4" />
                   Your browser does not support the video tag.
-              </video>
-              <button onClick={() => handleDeleteLesson(lesson._id, cls._id)} className="px-2 py-1 bg-red-500 text-white font-bold rounded mt-2">Delete Lesson</button>
-            </div>
-          ))}
+                </video>
+                <button onClick={() => handleDeleteLesson(lesson._id, cls._id)} className="px-2 py-1 bg-red-500 text-white font-bold rounded mt-2">
+                  Delete Lesson
+                </button>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-400">No lessons available.</p>
+          )}
         </div>
-      ))}
-    </div>
-  );
+      ))
+    ) : (
+      <p className="text-gray-400">No classes available.</p>
+    )}
+  </div>
+);
 };
 
 export default ManageClasses;
