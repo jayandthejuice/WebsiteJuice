@@ -36,7 +36,23 @@ export const getClasses = async () => {
 };
 
 export const addChapter = (data) => API.post('/classes/add-chapter', data); // Add a chapter (admin only)
-export const addLesson = (data) => API.post('/classes/add-lesson', data); // Add a lesson to a chapter (admin only)
+//export const addLesson = (data) => API.post('/classes/add-lesson', data); // Add a lesson to a class (admin only)
+export const addLesson = async (formData) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await API.post("/classes/add-lesson", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error adding lesson:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
 export const updateLesson = (lessonId, data) =>
   API.put(`/classes/update-lesson/${lessonId}`, data); // Update a specific lesson (admin only)
 
