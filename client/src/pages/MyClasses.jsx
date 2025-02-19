@@ -364,8 +364,7 @@ const MyClasses = () => {
                           >
                             <source
                               //src={`http://localhost:5001/${lesson.content}`}
-                              src={`${API_BASE_URL}/${lesson.content}`}
-                              type="video/mp4"
+                              src={lesson.content} type="video/mp4"
                             />
                             Your browser does not support the video tag.
                           </video>
