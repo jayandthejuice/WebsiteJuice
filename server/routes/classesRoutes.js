@@ -17,16 +17,35 @@ const {
 const Classes = require('../models/Classes'); // Importing the Classes model
 
 // Configure Multer for file uploads
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, 'uploads/'); // Directory to save uploaded files
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, `${Date.now()}-${file.originalname}`); // Generate unique filenames
+//   },
+// });
+const multer = require("multer");
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Directory to save uploaded files
+    cb(null, "uploads/"); // Ensure this folder exists!
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`); // Generate unique filenames
+    cb(null, `${Date.now()}-${file.originalname}`);
   },
 });
 
-const upload = multer({ storage }); // Initialize multer with storage configuration
+// ✅ Set the max file size to 2GB (2 * 1024 * 1024 * 1024 bytes)
+const upload = multer({
+  storage,
+  limits: { fileSize: 2 * 1024 * 1024 * 1024 }, // 2GB
+});
+
+//router.post("/add-lesson", protect, adminProtect, upload.single("video"), addLesson);
+
+
+//const upload = multer({ storage }); // Initialize multer with storage configuration
 
 // Add user progress tracking to fetch classes
 router.get('/my-classes', protect, getClasses);
