@@ -36,7 +36,6 @@ const storage = new CloudinaryStorage({
 //     cb(null, `${Date.now()}-${file.originalname}`); // Generate unique filenames
 //   },
 // });
-const multer = require("multer");
 
 // ✅ Set the max file size to 2GB (2 * 1024 * 1024 * 1024 bytes)
 const upload = multer({ storage });
