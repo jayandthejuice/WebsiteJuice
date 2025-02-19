@@ -12,6 +12,10 @@ const app = express();
 
 // Middleware
 app.use(express.json()); // Parse incoming JSON requests
+// ✅ Increase request limits (set to 3GB just in case)
+app.use(express.json({ limit: "3000mb" })); 
+app.use(express.urlencoded({ limit: "3000mb", extended: true }));
+
 app.use(cors()); // Enable CORS for cross-origin requests
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
