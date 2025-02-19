@@ -527,32 +527,57 @@ const ManageClasses = () => {
     }
   };
 
+  // const handleAddLesson = async (e) => {
+  //   e.preventDefault();
+
+  //   if (!newLesson.video) {
+  //     setError('Please upload a video file.');
+  //     return;
+  //   }
+
+  //   const formData = new FormData();
+  //   formData.append('classId', newLesson.classId);
+  //   formData.append('lessonTitle', newLesson.lessonTitle);
+  //   formData.append('video', newLesson.video);
+
+  //   try {
+  //     const response = await addLesson(formData);
+  //     setSuccess('Lesson added successfully!');
+  //     setClasses(classes.map(cls => 
+  //       cls._id === newLesson.classId ? { ...cls, lessons: [...cls.lessons, response.lesson] } : cls
+  //     ));
+  //     setNewLesson({ classId: '', lessonTitle: '', video: null });
+  //   } catch (err) {
+  //     console.error('Error adding lesson:', err);
+  //     setError('Error adding lesson.');
+  //   }
+  // };
   const handleAddLesson = async (e) => {
     e.preventDefault();
-
+  
     if (!newLesson.video) {
-      setError('Please upload a video file.');
+      setError("Please upload a video file.");
       return;
     }
-
+  
     const formData = new FormData();
-    formData.append('classId', newLesson.classId);
-    formData.append('lessonTitle', newLesson.lessonTitle);
-    formData.append('video', newLesson.video);
-
+    formData.append("classId", newLesson.classId);
+    formData.append("lessonTitle", newLesson.lessonTitle);
+    formData.append("video", newLesson.video); // ✅ Uploads to Cloudinary
+  
     try {
       const response = await addLesson(formData);
-      setSuccess('Lesson added successfully!');
-      setClasses(classes.map(cls => 
+      setSuccess("Lesson added successfully!");
+      setClasses(classes.map(cls =>
         cls._id === newLesson.classId ? { ...cls, lessons: [...cls.lessons, response.lesson] } : cls
       ));
-      setNewLesson({ classId: '', lessonTitle: '', video: null });
+      setNewLesson({ classId: "", lessonTitle: "", video: null });
     } catch (err) {
-      console.error('Error adding lesson:', err);
-      setError('Error adding lesson.');
+      console.error("Error adding lesson:", err);
+      setError("Error adding lesson.");
     }
   };
-
+  
   const handleUpdateLesson = async (lessonId, classId) => {
     if (!updatedLessonTitle.trim()) {
       setError('Lesson title cannot be empty.');

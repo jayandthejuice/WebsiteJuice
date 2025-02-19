@@ -19,6 +19,17 @@ app.use(express.urlencoded({ limit: "3000mb", extended: true }));
 app.use(cors()); // Enable CORS for cross-origin requests
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+const cloudinary = require("cloudinary").v2;
+
+// ✅ Configure Cloudinary with Secure Credentials
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+console.log("✅ Cloudinary Config Loaded!");
+
 // Routes
 app.use('/api/auth', authRoutes); // Define the auth route
 app.use('/api/classes', classesRoutes); // My Classes route

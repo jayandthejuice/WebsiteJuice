@@ -4,6 +4,8 @@ const router = express.Router();
 const protect = require('../middleware/authMiddleware');
 const adminProtect = require('../middleware/adminProtect');
 const UserProgress = require('../models/UserProgress'); // Import the UserProgress model
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+
 
 const {
   watchLesson,
@@ -16,6 +18,15 @@ const {
 } = require('../controllers/classesController'); // Importing required controllers
 const Classes = require('../models/Classes'); // Importing the Classes model
 
+// ✅ Configure Cloudinary Storage for Videos
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "lesson_videos", // ✅ Videos will be stored in Cloudinary under this folder
+    resource_type: "video",
+  },
+});
+
 // Configure Multer for file uploads
 // const storage = multer.diskStorage({
 //   destination: (req, file, cb) => {
@@ -27,20 +38,9 @@ const Classes = require('../models/Classes'); // Importing the Classes model
 // });
 const multer = require("multer");
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Ensure this folder exists!
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
-
 // ✅ Set the max file size to 2GB (2 * 1024 * 1024 * 1024 bytes)
-const upload = multer({
-  storage,
-  limits: { fileSize: 2 * 1024 * 1024 * 1024 }, // 2GB
-});
+const upload = multer({ storage });
+
 
 //router.post("/add-lesson", protect, adminProtect, upload.single("video"), addLesson);
 
@@ -54,7 +54,8 @@ router.get('/my-classes', protect, getClasses);
 router.post('/watch-lesson', protect, watchLesson);
 
 // Existing routes
-router.post("/add-lesson", protect, adminProtect, upload.single("video"), addLesson); // ✅ Use imported function
+router.post("/add-lesson", protect, adminProtect, upload.single("video"), addLesson);
+//router.post("/add-lesson", protect, adminProtect, upload.single("video"), addLesson); // ✅ Use imported function
 
 // Add route to reset user progress
 router.delete('/reset-progress', protect, async (req, res) => {
