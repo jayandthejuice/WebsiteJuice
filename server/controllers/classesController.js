@@ -1,4 +1,6 @@
 const Classes = require('../models/Classes'); // Example schema for chapters and lessons
+const cloudinary = require("cloudinary").v2;
+const { Readable } = require("stream");
 
 const getClasses = async (req, res) => {
   console.log("\n🔵 [DEBUG] getClasses function was called!");
@@ -136,62 +138,29 @@ const deleteClass = async (req, res) => {
   }
 };
 
-const addLesson = async (req, res) => {
-  const { classId, lessonTitle } = req.body;
-
-  if (!classId || !lessonTitle || !req.file) {
-    return res.status(400).json({
-      message: "Class ID, lesson title, and a video file are required.",
-    });
-  }
-
-  try {
-    // ✅ Find the class to add the lesson to
-    const classData = await Classes.findById(classId);
-    if (!classData) {
-      return res.status(404).json({ message: "Class not found." });
-    }
-
-    // ✅ Create lesson object
-    const lesson = {
-      title: lessonTitle,
-      content: req.file.path, // ✅ Save the uploaded file path
-    };
-
-    // ✅ Add lesson to the class and save
-    classData.lessons.push(lesson);
-    await classData.save();
-
-    res.status(201).json({
-      message: "Lesson added successfully!",
-      lesson,
-      updatedClass: classData,
-    });
-  } catch (err) {
-    console.error("[ERROR] Error in addLesson:", err);
-    res.status(500).json({ message: "Server error while adding the lesson." });
-  }
-};
 // const addLesson = async (req, res) => {
 //   const { classId, lessonTitle } = req.body;
 
 //   if (!classId || !lessonTitle || !req.file) {
-//     return res.status(400).json({ message: "Class ID, lesson title, and a video file are required." });
+//     return res.status(400).json({
+//       message: "Class ID, lesson title, and a video file are required.",
+//     });
 //   }
 
 //   try {
-//     // ✅ Find the class where the lesson should be added
+//     // ✅ Find the class to add the lesson to
 //     const classData = await Classes.findById(classId);
 //     if (!classData) {
 //       return res.status(404).json({ message: "Class not found." });
 //     }
 
-//     // ✅ Save Cloudinary Video URL Instead of Local File
+//     // ✅ Create lesson object
 //     const lesson = {
 //       title: lessonTitle,
-//       content: req.file.path, // ✅ Cloudinary automatically returns the hosted URL
+//       content: req.file.path, // ✅ Save the uploaded file path
 //     };
 
+//     // ✅ Add lesson to the class and save
 //     classData.lessons.push(lesson);
 //     await classData.save();
 
@@ -205,6 +174,49 @@ const addLesson = async (req, res) => {
 //     res.status(500).json({ message: "Server error while adding the lesson." });
 //   }
 // };
+const Classes = require("../models/Classes");
+const cloudinary = require("cloudinary").v2;
+const { Readable } = require("stream");
+
+exports.addLesson = async (req, res) => {
+  try {
+    const { classId, lessonTitle } = req.body;
+
+    if (!req.file) {
+      return res.status(400).json({ message: "No video file uploaded" });
+    }
+
+    // ✅ Upload video to Cloudinary
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { resource_type: "video", folder: "lessons" },
+      async (error, result) => {
+        if (error) {
+          console.error("Cloudinary Upload Error:", error);
+          return res.status(500).json({ message: "Error uploading to Cloudinary" });
+        }
+
+        // ✅ Store the video URL in MongoDB
+        const updatedClass = await Classes.findByIdAndUpdate(
+          classId,
+          { $push: { lessons: { title: lessonTitle, content: result.secure_url } } },
+          { new: true }
+        );
+
+        if (!updatedClass) {
+          return res.status(404).json({ message: "Class not found" });
+        }
+
+        res.json({ message: "Lesson added successfully!", lesson: { title: lessonTitle, content: result.secure_url } });
+      }
+    );
+
+    Readable.from(req.file.buffer).pipe(uploadStream);
+  } catch (error) {
+    console.error("Error adding lesson:", error);
+    res.status(500).json({ message: "Error adding lesson" });
+  }
+};
+
 // Update lesson content (admin only)
 const updateLesson = async (req, res) => {
   const { lessonId } = req.params;
