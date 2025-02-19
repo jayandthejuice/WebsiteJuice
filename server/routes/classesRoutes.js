@@ -176,6 +176,28 @@ router.post("/add-lesson", protect, adminProtect, upload.single("video"), async 
   }
 });
 
+// ✅ Get Classes for the Logged-in User (Fixing the issue)
+// router.get("/my-classes", protect, async (req, res) => {
+//   try {
+//     const userId = req.user._id; // Get the logged-in user's ID
+//     console.log(`[DEBUG] Fetching classes for user: ${userId}`);
+
+//     // ✅ Fetch classes
+//     const classes = await Classes.find().sort({ _id: 1 });
+
+//     if (!classes.length) {
+//       return res.status(404).json({ message: "No classes found." });
+//     }
+
+//     res.status(200).json(classes);
+//   } catch (err) {
+//     console.error("[ERROR] Fetching User Classes:", err);
+//     res.status(500).json({ message: "Error fetching user classes." });
+//   }
+// });
+router.get('/my-classes', protect, getClasses);
+
+
 // ✅ Delete a Lesson
 router.delete("/delete-lesson/:lessonId", protect, adminProtect, async (req, res) => {
   try {
@@ -200,6 +222,7 @@ router.delete("/delete-lesson/:lessonId", protect, adminProtect, async (req, res
 // ✅ Manage Classes
 router.post("/add-class", protect, adminProtect, addClass);
 router.put("/update-class/:classId", protect, adminProtect, updateClassTitle);
+router.post('/watch-lesson', protect, watchLesson);
 router.delete("/delete-class/:classId", protect, adminProtect, deleteClass);
 router.put("/update-lesson/:lessonId", protect, adminProtect, updateLesson);
 
