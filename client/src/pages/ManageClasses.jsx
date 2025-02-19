@@ -527,31 +527,70 @@ const ManageClasses = () => {
     }
   };
 
+  // const handleAddLesson = async (e) => {
+  //   e.preventDefault();
+
+  //   if (!newLesson.video) {
+  //     setError('Please upload a video file.');
+  //     return;
+  //   }
+
+  //   const formData = new FormData();
+  //   formData.append('classId', newLesson.classId);
+  //   formData.append('lessonTitle', newLesson.lessonTitle);
+  //   formData.append('video', newLesson.video);
+
+  //   try {
+  //     const response = await addLesson(formData);
+  //     setSuccess('Lesson added successfully!');
+  //     setClasses(classes.map(cls => 
+  //       cls._id === newLesson.classId ? { ...cls, lessons: [...cls.lessons, response.lesson] } : cls
+  //     ));
+  //     setNewLesson({ classId: '', lessonTitle: '', video: null });
+  //   } catch (err) {
+  //     console.error('Error adding lesson:', err);
+  //     setError('Error adding lesson.');
+  //   }
+  // };
   const handleAddLesson = async (e) => {
     e.preventDefault();
-
+  
     if (!newLesson.video) {
       setError('Please upload a video file.');
       return;
     }
-
+  
     const formData = new FormData();
     formData.append('classId', newLesson.classId);
     formData.append('lessonTitle', newLesson.lessonTitle);
     formData.append('video', newLesson.video);
-
+  
     try {
       const response = await addLesson(formData);
+  
+      if (!response || !response.lesson) {
+        setError('Error adding lesson. No valid response received.');
+        return;
+      }
+  
       setSuccess('Lesson added successfully!');
-      setClasses(classes.map(cls => 
-        cls._id === newLesson.classId ? { ...cls, lessons: [...cls.lessons, response.lesson] } : cls
-      ));
+  
+      // **🚀 FIX: Use Functional State Update**
+      setClasses(prevClasses =>
+        prevClasses.map(cls =>
+          cls._id === newLesson.classId
+            ? { ...cls, lessons: [...(cls.lessons || []), response.lesson] }
+            : cls
+        )
+      );
+  
       setNewLesson({ classId: '', lessonTitle: '', video: null });
     } catch (err) {
       console.error('Error adding lesson:', err);
       setError('Error adding lesson.');
     }
   };
+  
   // const handleAddLesson = async (e) => {
   //   e.preventDefault();
   
@@ -602,20 +641,51 @@ const ManageClasses = () => {
     }
   };
 
+  // const handleDeleteLesson = async (lessonId, classId) => {
+  //   try {
+  //     await deleteLesson(lessonId);
+  //     setSuccess('Lesson deleted successfully!');
+  //     setClasses(classes.map(cls =>
+  //       cls._id === classId
+  //         ? { ...cls, lessons: cls.lessons.filter(lesson => lesson._id !== lessonId) }
+  //         : cls
+  //     ));
+  //   } catch (err) {
+  //     console.error('Error deleting lesson:', err);
+  //     setError('Error deleting lesson.');
+  //   }
+  // };
   const handleDeleteLesson = async (lessonId, classId) => {
     try {
-      await deleteLesson(lessonId);
-      setSuccess('Lesson deleted successfully!');
-      setClasses(classes.map(cls =>
-        cls._id === classId
-          ? { ...cls, lessons: cls.lessons.filter(lesson => lesson._id !== lessonId) }
-          : cls
-      ));
-    } catch (err) {
-      console.error('Error deleting lesson:', err);
-      setError('Error deleting lesson.');
+      console.log("Deleting lesson with ID:", lessonId); // Debugging log
+  
+      const response = await fetch(`${API_BASE_URL}/classes/delete-lesson/${lessonId}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, // If using authentication
+      });
+  
+      const data = await response.json();
+      console.log("Delete response:", data); // Debugging log
+  
+      if (response.ok) {
+        setSuccess("Lesson deleted successfully!");
+        
+        setClasses(prevClasses =>
+          prevClasses.map(cls =>
+            cls._id === classId
+              ? { ...cls, lessons: cls.lessons.filter(lesson => lesson._id !== lessonId) }
+              : cls
+          )
+        );
+      } else {
+        setError(data.message || "Failed to delete lesson.");
+      }
+    } catch (error) {
+      console.error("Error deleting lesson:", error);
+      setError("Error deleting lesson.");
     }
   };
+  
 
   return (
     <div className="bg-black min-h-screen text-white p-8">
@@ -674,7 +744,8 @@ const ManageClasses = () => {
               <video controls width="100%">
                 {/* <source src={`http://localhost:5001/${lesson.content}`} type="video/mp4" /> */}
                 {/* <source src={`${API_BASE_URL}/${lesson.content}`} type="video/mp4" /> */}
-                <source src={lesson.content} type="video/mp4" />
+                <source src={`${lesson.content}`} type="video/mp4" />
+                  Your browser does not support the video tag.
               </video>
               <button onClick={() => handleDeleteLesson(lesson._id, cls._id)} className="px-2 py-1 bg-red-500 text-white font-bold rounded mt-2">Delete Lesson</button>
             </div>
