@@ -63,24 +63,39 @@ export const deleteLesson = async (lessonId) => {
   }
 };
 
+// export const addClass = async (classData) => {
+//   const token = localStorage.getItem("token"); // Get auth token
+//   //const response = await fetch("${BASE_URL}/api/classes/add-class", {
+//     const response = await API.post("/classes/add-class", {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//       Authorization: `Bearer ${token}`, // Ensure only admins can add classes
+//     },
+//     body: JSON.stringify(classData),
+//   });
+
+//   if (!response.ok) {
+//     throw new Error("Failed to add class");
+//   }
+
+//   return await response.json();
+// };
 export const addClass = async (classData) => {
-  const token = localStorage.getItem("token"); // Get auth token
-  //const response = await fetch("${BASE_URL}/api/classes/add-class", {
-    const response = await API.post("/classes/add-class", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`, // Ensure only admins can add classes
-    },
-    body: JSON.stringify(classData),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to add class");
+  try {
+    const token = localStorage.getItem("token");
+    const response = await API.post("/classes/add-class", classData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error adding class:", error.response?.data || error.message);
+    throw error;
   }
-
-  return await response.json();
 };
+
 export const updateClassTitle = async (classId, updatedData) => {
   const response = await API.put(`/classes/update-class/${classId}`, updatedData);
   return response.data;
