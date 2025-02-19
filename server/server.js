@@ -17,7 +17,18 @@ app.use(express.json({ limit: "3000mb" }));
 app.use(express.urlencoded({ limit: "3000mb", extended: true }));
 
 app.use(cors()); // Enable CORS for cross-origin requests
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+const fs = require("fs");
+const path = require("path");
+
+const uploadDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+  console.log("✅ 'uploads/' directory created.");
+}
+
+app.use("/uploads", express.static(uploadDir)); // Serve uploaded files
+
+//app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const cloudinary = require("cloudinary").v2;
 

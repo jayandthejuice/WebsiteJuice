@@ -19,7 +19,6 @@ const {
 } = require('../controllers/classesController'); // Importing required controllers
 const Classes = require('../models/Classes'); // Importing the Classes model
 
-// ✅ Configure Cloudinary Storage for Videos
 // ✅ Configure Multer for Local File Uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
