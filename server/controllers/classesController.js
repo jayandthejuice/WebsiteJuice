@@ -174,9 +174,6 @@ const deleteClass = async (req, res) => {
 //     res.status(500).json({ message: "Server error while adding the lesson." });
 //   }
 // };
-const Classes = require("../models/Classes");
-const cloudinary = require("cloudinary").v2;
-const { Readable } = require("stream");
 
 exports.addLesson = async (req, res) => {
   try {
