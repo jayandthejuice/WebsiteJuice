@@ -673,7 +673,8 @@ const ManageClasses = () => {
               <p>{lesson.title}</p>
               <video controls width="100%">
                 {/* <source src={`http://localhost:5001/${lesson.content}`} type="video/mp4" /> */}
-                <source src={`${API_BASE_URL}/${lesson.content}`} type="video/mp4" />
+                {/* <source src={`${API_BASE_URL}/${lesson.content}`} type="video/mp4" /> */}
+                <source src={lesson.content} type="video/mp4" />
               </video>
               <button onClick={() => handleDeleteLesson(lesson._id, cls._id)} className="px-2 py-1 bg-red-500 text-white font-bold rounded mt-2">Delete Lesson</button>
             </div>
