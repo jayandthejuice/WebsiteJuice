@@ -62,15 +62,19 @@ app.get("/uploads/:filename", (req, res) => {
       "Accept-Ranges": "bytes",
       "Content-Length": chunksize,
       "Content-Type": filePath.endsWith(".mov") ? "video/quicktime" : "video/mp4",
+      "Content-Disposition": "inline", // ✅ Make sure it's inline
     };
 
     res.writeHead(206, head);
     file.pipe(res);
   } else {
-    // ✅ If no range header, send the entire file
+    // ✅ Serve the full file with streaming headers
     res.writeHead(200, {
       "Content-Length": fileSize,
       "Content-Type": filePath.endsWith(".mov") ? "video/quicktime" : "video/mp4",
+      "Accept-Ranges": "bytes",
+      "Cache-Control": "no-store",
+      "Content-Disposition": "inline", // ✅ Force inline viewing
     });
 
     fs.createReadStream(filePath).pipe(res);
