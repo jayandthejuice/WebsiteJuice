@@ -4,8 +4,9 @@ const router = express.Router();
 const protect = require('../middleware/authMiddleware');
 const adminProtect = require('../middleware/adminProtect');
 const UserProgress = require('../models/UserProgress'); // Import the UserProgress model
+const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
-
+require("dotenv").config(); // Ensure environment variables are loaded
 
 const {
   watchLesson,
