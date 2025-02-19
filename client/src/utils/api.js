@@ -85,9 +85,21 @@ export const updateClassTitle = async (classId, updatedData) => {
   const response = await API.put(`/classes/update-class/${classId}`, updatedData);
   return response.data;
 };
+// export const deleteClass = async (classId) => {
+//   const response = await API.delete(`/classes/delete-class/${classId}`);
+//   return response.data;
+// };
 export const deleteClass = async (classId) => {
-  const response = await API.delete(`/classes/delete-class/${classId}`);
-  return response.data;
+  try {
+    const token = localStorage.getItem("token");
+    const response = await API.delete(`/classes/delete-class/${classId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error deleting class:", error.response?.data || error.message);
+    throw error;
+  }
 };
 
 //export:
