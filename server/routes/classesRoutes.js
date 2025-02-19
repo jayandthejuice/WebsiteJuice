@@ -20,30 +20,21 @@ const {
 const Classes = require('../models/Classes'); // Importing the Classes model
 
 // ✅ Configure Cloudinary Storage for Videos
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "lesson_videos", // ✅ Videos will be stored in Cloudinary under this folder
-    resource_type: "video",
+// ✅ Configure Multer for Local File Uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // ✅ Save files in the 'uploads/' directory
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`); // ✅ Unique filenames
   },
 });
 
-// Configure Multer for file uploads
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, 'uploads/'); // Directory to save uploaded files
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, `${Date.now()}-${file.originalname}`); // Generate unique filenames
-//   },
-// });
-
-// ✅ Set the max file size to 2GB (2 * 1024 * 1024 * 1024 bytes)
-const upload = multer({ storage });
-
-
-//router.post("/add-lesson", protect, adminProtect, upload.single("video"), addLesson);
-
+// ✅ Set Maximum File Size to 2GB
+const upload = multer({
+  storage,
+  limits: { fileSize: 2 * 1024 * 1024 * 1024 }, // ✅ 2GB Limit
+});
 
 //const upload = multer({ storage }); // Initialize multer with storage configuration
 
