@@ -32,7 +32,7 @@ if (!fs.existsSync(uploadsDir)) {
 // ✅ Serve static files properly
 app.use("/uploads", express.static("uploads"));
 
-// ✅ Custom Route to Handle MOV & MP4 Files Correctly
+// ✅ Stream Video Files Properly
 app.get("/uploads/:filename", (req, res) => {
   const filePath = path.join(uploadsDir, req.params.filename);
 
@@ -40,16 +40,43 @@ app.get("/uploads/:filename", (req, res) => {
     return res.status(404).json({ message: "File not found" });
   }
 
-  // ✅ Set correct content type for streaming
-  if (filePath.endsWith(".mov")) {
-    res.setHeader("Content-Type", "video/quicktime");
-  } else if (filePath.endsWith(".mp4")) {
-    res.setHeader("Content-Type", "video/mp4");
-  }
+  const stat = fs.statSync(filePath);
+  const fileSize = stat.size;
+  const range = req.headers.range;
 
-  res.setHeader("Content-Disposition", "inline"); // Stream instead of download
-  res.sendFile(filePath);
+  if (range) {
+    // ✅ Handle Range Requests for streaming
+    const parts = range.replace(/bytes=/, "").split("-");
+    const start = parseInt(parts[0], 10);
+    const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+
+    if (start >= fileSize) {
+      res.status(416).send("Requested range not satisfiable\n");
+      return;
+    }
+
+    const chunksize = end - start + 1;
+    const file = fs.createReadStream(filePath, { start, end });
+    const head = {
+      "Content-Range": `bytes ${start}-${end}/${fileSize}`,
+      "Accept-Ranges": "bytes",
+      "Content-Length": chunksize,
+      "Content-Type": filePath.endsWith(".mov") ? "video/quicktime" : "video/mp4",
+    };
+
+    res.writeHead(206, head);
+    file.pipe(res);
+  } else {
+    // ✅ If no range header, send the entire file
+    res.writeHead(200, {
+      "Content-Length": fileSize,
+      "Content-Type": filePath.endsWith(".mov") ? "video/quicktime" : "video/mp4",
+    });
+
+    fs.createReadStream(filePath).pipe(res);
+  }
 });
+
 const cloudinary = require("cloudinary").v2;
 
 // ✅ Configure Cloudinary with Secure Credentials
